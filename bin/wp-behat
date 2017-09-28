@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+SUITE=${1-core}
+BROWSER=${2-phantomjs}
+FORMAT=${3-progress}
+
+exec_path=$(realpath $(dirname ${0})/../0x6d617474/wp-testing/src/)
+bin_path=$(realpath $(dirname ${0}))
+
+CFG=$(${exec_path}/getconfig.php)
+URL=$(echo "$CFG" | head -n 1)
+PLUGIN_PATH=$(echo "$CFG" | tail -n 1)/wp_testing.php
+
+if [ ! -d $(dirname ${PLUGIN_PATH}) ]; then
+    mkdir -p $(dirname ${PLUGIN_PATH});
+fi
+
+cp ${exec_path}/wp_testing.php ${PLUGIN_PATH}
+
+if [[ "${BROWSER}" != "phantomjs" ]]; then
+    ${exec_path}/install-selenium.sh
+    ${exec_path}/run-selenium.sh
+else
+    ${exec_path}/run-phantomjs.sh
+fi
+
+export BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"'${URL}'","selenium2":{"browser":"'${BROWSER}'"}}}}'
+${bin_path}/behat --colors --format=${FORMAT} --no-snippets --suite=${SUITE} -v
+rm -f ${PLUGIN_PATH}
+
+if [[ "${BROWSER}" != "phantomjs" ]]; then
+    ${exec_path}/stop-selenium.sh
+else
+    ${exec_path}/stop-phantomjs.sh
+fi

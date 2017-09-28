@@ -1,0 +1,37 @@
+{
+  "name": "0x6d617474/wp-testing",
+  "description": "Testing libraries for WordPress",
+  "require": {
+    "php": ">=5.6",
+    "behat/behat": "^3.0",
+    "behat/mink": "^1.7",
+    "behat/mink-extension": "^2.2",
+    "behat/mink-goutte-driver": "*",
+    "behat/mink-selenium2-driver": "*",
+    "phpunit/phpunit": "^5.7"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ox6d617474\\WPTest\\": "src/"
+    }
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages" : true
+  },
+  "minimum-stability": "stable",
+  "bin": [
+    "bin/wp-behat",
+    "bin/wp-cleanup",
+    "src/install.sh",
+    "src/install-selenium.sh",
+    "src/run-selenium.sh",
+    "src/stop-selenium.sh",
+    "src/run-phantomjs.sh",
+    "src/stop-phantomjs.sh",
+    "src/getconfig.php"
+  ]
+}

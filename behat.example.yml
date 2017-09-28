@@ -1,0 +1,14 @@
+# behat.yml
+default:
+    autoload: [ %paths.base%/tests/behat/contexts ]
+    suites:
+        core:
+            paths: [ %paths.base%/tests/behat/features/core ]
+            filters:
+            contexts:
+                - FeatureContext: ~
+        dev:
+            paths: [ %paths.base%/tests/behat/features/dev ]
+            filters:
+            contexts:
+                - FeatureContext: ~

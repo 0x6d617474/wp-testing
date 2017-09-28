@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+function wptest.cleanup()
+{
+    local config_file=$1
+
+    # Read the database config from the wp-config.php file
+    local DB_NAME=$(cat ${config_file} <(echo 'echo DB_NAME;') | grep -v "^require_once" | grep -v "^<?php" | xargs -0 php -r)
+    local DB_USER=$(cat ${config_file} <(echo 'echo DB_USER;') | grep -v "^require_once" | grep -v "^<?php" | xargs -0 php -r)
+    local DB_PASS=$(cat ${config_file} <(echo 'echo DB_PASSWORD;') | grep -v "^require_once" | grep -v "^<?php" | xargs -0 php -r)
+    local DB_HOST=$(cat ${config_file} <(echo 'echo DB_HOST;') | grep -v "^require_once" | grep -v "^<?php" | xargs -0 php -r)
+
+    # Fix host and port
+    local DB_PORT=$(echo ${DB_HOST} | grep -oe "[0-9]\{1,\}$")
+    DB_HOST=$(echo ${DB_HOST} | sed -e "s/:${DB_PORT}//g")
+    if [[ -z ${DB_PORT} ]]; then
+        DB_PORT=3306
+    fi
+
+    # Remove tables in the database starting with wptests_
+    MYSQL="mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} -P ${DB_PORT} ${DB_NAME}"
+    echo "SHOW TABLES;" | ${MYSQL} | grep -e ^wptests_ | xargs -n 1 -I "@@" ${MYSQL} -e "DROP TABLE \`@@\`"
+}
+
+set -e
+
+wptest.cleanup $1;

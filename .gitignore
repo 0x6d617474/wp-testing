@@ -1,0 +1,20 @@
+# Ignore hidden files
+.*
+
+# Ignore temporary files
+*~
+
+# Annoying Windows files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Generated content
+/lib
+/vendor
+
+# Exceptions
+!.gitignore
+!.gitkeep
+!/.php_cs
