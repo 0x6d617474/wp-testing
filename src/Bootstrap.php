@@ -38,7 +38,10 @@ final class Bootstrap
 
 
         // Run the setup script
-        passthru(sprintf('%s/install.sh %s %s', __DIR__, $config_file, $libpath));
+        passthru(sprintf('%s/install.sh %s %s', __DIR__, $config_file, $libpath), $ret);
+        if ($ret != 0) {
+            exit($ret);
+        }
 
         $multisite = ($GLOBALS['WPTEST_MULTISITE'] == 'true');
         if ($multisite) {

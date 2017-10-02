@@ -56,6 +56,13 @@ function wptest.install()
     fi
 }
 
+hash svn > /dev/null 2>&1
+ret=$?
+if [ "${ret}" -eq "1" ]; then
+    echo "SVN dependency not found!"
+    exit 1
+fi
+
 set -e
 
 wptest.install $1 $2;

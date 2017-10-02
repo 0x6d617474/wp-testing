@@ -1,5 +1,20 @@
 #!/usr/bin/env bash
 
+# Process arguments to pass through
+ARGS=()
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+if [[ $key == --* ]]; then
+    ARGS+=("$1")
+else
+    POSITIONAL+=("$1")
+fi
+shift
+done
+set -- "${POSITIONAL[@]}"
+
 SUITE=${1-core}
 BROWSER=${2-phantomjs}
 FORMAT=${3-progress}
@@ -21,11 +36,17 @@ if [[ "${BROWSER}" != "phantomjs" ]]; then
     ${exec_path}/install-selenium.sh
     ${exec_path}/run-selenium.sh
 else
+    hash phantomjs > /dev/null 2>&1
+    ret=$?
+    if [ "${ret}" -eq "1" ]; then
+        echo "PhantomJS not found!"
+        exit 1
+    fi
     ${exec_path}/run-phantomjs.sh
 fi
 
 export BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"'${URL}'","selenium2":{"browser":"'${BROWSER}'"}}}}'
-${bin_path}/behat --colors --format=${FORMAT} --no-snippets --suite=${SUITE} -v
+${bin_path}/behat --colors --format=${FORMAT} --no-snippets --suite=${SUITE} -v ${ARGS}
 rm -f ${PLUGIN_PATH}
 
 if [[ "${BROWSER}" != "phantomjs" ]]; then
